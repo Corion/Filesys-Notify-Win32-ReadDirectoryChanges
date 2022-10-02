@@ -86,6 +86,15 @@ Win32::API->Import( 'kernel32.dll', 'ReadDirectoryChangesW', 'NPNNNPNN','N' )
 Win32::API->Import( 'kernel32.dll', 'CancelIoEx', 'NN','N' )
     or die $^E;
 
+our @action = (
+        'unknown',
+        'added',
+        'removed',
+        'modified',
+        'old_name',
+        'new_name',
+);
+
 sub _unpack_file_notify_information( $buf ) {
 # typedef struct _FILE_NOTIFY_INFORMATION {
 #   DWORD NextEntryOffset;
@@ -93,15 +102,6 @@ sub _unpack_file_notify_information( $buf ) {
 #   DWORD FileNameLength;
 #   WCHAR FileName[1];
 # } FILE_NOTIFY_INFORMATION, *PFILE_NOTIFY_INFORMATION;
-
-    state @action = (
-        'unknown',
-        'added',
-        'removed',
-        'modified',
-        'old_name',
-        'new_name',
-    );
 
     my @res;
     my $ofs = 0;
