@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 use File::Find;
-use Test::More tests => 2;
+use Test::More;
 
 =head1 PURPOSE
 
@@ -12,6 +12,13 @@ release date is mentioned as well
 
 =cut
 
+BEGIN {
+    if( $^O ne 'MSWin32' ) {
+        plan skip_all => "This module only works on Windows";
+        exit;
+    };
+}
+plan tests => 2;
 require './Makefile.PL';
 # Loaded from Makefile.PL
 our %module = get_module_info();

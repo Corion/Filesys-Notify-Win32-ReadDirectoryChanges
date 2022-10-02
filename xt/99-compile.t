@@ -4,6 +4,12 @@ use strict;
 use File::Find;
 use Test::More;
 BEGIN {
+    if( $^O ne 'MSWin32' ) {
+        plan skip_all => "This module only works on Windows";
+        exit;
+    };
+}
+BEGIN {
     eval 'use Capture::Tiny ":all"; 1';
     if ($@) {
         plan skip_all => "Capture::Tiny needed for testing";

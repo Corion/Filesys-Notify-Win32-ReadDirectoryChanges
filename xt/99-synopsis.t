@@ -1,8 +1,16 @@
+#!perl
 use strict;
 use Test::More;
 use File::Spec;
 use File::Find;
 use File::Temp 'tempfile';
+
+BEGIN {
+    if( $^O ne 'MSWin32' ) {
+        plan skip_all => "This module only works on Windows";
+        exit;
+    };
+}
 
 require './Makefile.PL';
 # Loaded from Makefile.PL

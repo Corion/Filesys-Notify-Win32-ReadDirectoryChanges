@@ -17,6 +17,13 @@ the optional prerequisite.
 =cut
 
 BEGIN {
+    if( $^O ne 'MSWin32' ) {
+        plan skip_all => "This module only works on Windows";
+        exit;
+    };
+}
+
+BEGIN {
     eval {
         require CPAN::Meta::Prereqs;
         require Parse::CPAN::Meta;

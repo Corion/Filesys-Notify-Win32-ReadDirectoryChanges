@@ -1,3 +1,4 @@
+#!perl
 use Test::More;
 
 # Check that all released module files are in
@@ -7,6 +8,12 @@ use File::Spec;
 use File::Find;
 use strict;
 
+BEGIN {
+    if( $^O ne 'MSWin32' ) {
+        plan skip_all => "This module only works on Windows";
+        exit;
+    };
+}
 my @files = ('Makefile.PL', 'MANIFEST', 'MANIFEST.SKIP', glob 't/*.t');
 
 require './Makefile.PL';

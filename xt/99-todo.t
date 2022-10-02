@@ -1,8 +1,15 @@
+#!perl
 use Test::More;
 use File::Spec;
 use File::Find;
 use strict;
 
+BEGIN {
+    if( $^O ne 'MSWin32' ) {
+        plan skip_all => "This module only works on Windows";
+        exit;
+    };
+}
 # Check that all files do not contain any
 # lines with "XXX" - such markers should
 # either have been converted into Todo-stuff

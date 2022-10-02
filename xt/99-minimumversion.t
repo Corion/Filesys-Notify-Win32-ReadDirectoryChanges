@@ -2,6 +2,11 @@
 use strict;
 use Test::More;
 
+if( $^O ne 'MSWin32' ) {
+    plan skip_all => "This module only works on Windows";
+    exit;
+};
+
 eval {
   #require Test::MinimumVersion::Fast;
   require Test::MinimumVersion;
