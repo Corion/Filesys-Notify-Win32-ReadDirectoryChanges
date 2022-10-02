@@ -21,7 +21,5 @@ Makefile$
 ^MYMETA
 ^.releaserc
 ^.*.cmd
-^chrome-versions
-^WWW-Mechanize-Chrome
-^frame-\d+.png
+^Filesys-Notify-Win32-ReadDirectoryChanges-
 ^demo/
