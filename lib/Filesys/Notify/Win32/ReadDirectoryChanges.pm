@@ -186,7 +186,6 @@ sub build_watcher( $self, %options ) {
     my $path = delete $options{ path };
     my $subtree = !!( $options{ subtree } // $self->subtree );
     my $queue = $self->queue;
-    # XXX check if/how we can pass in UTF-8 names, and if we need to encode them to UTF-16LE first
     my $hPath = CreateFile( $path, FILE_LIST_DIRECTORY()|GENERIC_READ(), FILE_SHARE_READ() | FILE_SHARE_WRITE(), [], OPEN_EXISTING(), FILE_FLAG_BACKUP_SEMANTICS(), [] )
         or die $^E;
     $path =~ s![\\/]$!!;
