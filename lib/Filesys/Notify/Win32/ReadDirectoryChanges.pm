@@ -25,7 +25,7 @@ Filesys::Notify::Win32::ReadDirectoryChanges - read/watch directory changes
   for my $dir (@ARGV) {
       $watcher->watch_directory( path => $dir, subtree => 1 );
   };
-  $watcher->watch(sub {
+  $watcher->wait(sub {
       my( $event ) = @_;
       say $event->{action}, ":", $event->{path};
   });
