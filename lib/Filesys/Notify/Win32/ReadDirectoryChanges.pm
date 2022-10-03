@@ -142,7 +142,7 @@ sub _unpack_file_notify_information( $buf ) {
 }
 
 sub _ReadDirectoryChangesW( $hDirectory, $watchSubTree, $filter ) {
-    my $buffer = "\0" x 16384;
+    my $buffer = "\0" x 65500;
     my $returnBufferSize = 0;
     my $r = ReadDirectoryChangesW(
         $hDirectory,
@@ -186,17 +186,13 @@ sub _watcher($winpath,$orgpath,$hPath,$subtree,$queue) {
             $i->{path} = $winpath . $i->{path};
             if( $is_cygwin ) {
                 my $p = $i->{path};
-                warn "win32 : $p";
-                #$i->{path} = Cygwin::win_to_posix_path( $p );
-                warn "cygwin: path: '$i->{path}'";
+                $i->{path} = Cygwin::win_to_posix_path( $p );
             };
             if( $i->{action} eq 'renamed') {
                 for( qw(old_name new_name)) {
                     $i->{$_} = $winpath . $i->{$_};
                     if( $is_cygwin ) {
-                        warn "win32 : $_: '$i->{$_}'";
-                        #$i->{$_} = Cygwin::win_to_posix_path( $i->{$_} );
-                        warn "cygwin: $_: '$i->{$_}'";
+                        $i->{$_} = Cygwin::win_to_posix_path( $i->{$_} );
                     };
                 };
             };
@@ -357,6 +353,12 @@ a third, synthetic event is generated, C<renamed>.
   }
 
 =back
+
+=head1 HELP WANTED
+
+In theory, this module should also work on Cygwin, but for some reason, it
+seems that there is memory corruption on Cygwin. If you happen to be handy
+with a debugger and familiar with Cygwin, your help is appreciated.
 
 =head1 SEE ALSO
 
