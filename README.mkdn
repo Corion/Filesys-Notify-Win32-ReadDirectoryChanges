@@ -14,7 +14,7 @@ Filesys::Notify::Win32::ReadDirectoryChanges - read/watch directory changes
     for my $dir (@ARGV) {
         $watcher->watch_directory( path => $dir, subtree => 1 );
     };
-    $watcher->watch(sub {
+    $watcher->wait(sub {
         my( $event ) = @_;
         say $event->{action}, ":", $event->{path};
     });
@@ -127,6 +127,12 @@ The following events are created by ReadDirectoryChangesW resp. this module
             old_name => 'old-name.example',
             new_name => 'new-name.example',
         }
+
+# HELP WANTED
+
+In theory, this module should also work on Cygwin, but for some reason, it
+seems that there is memory corruption on Cygwin. If you happen to be handy
+with a debugger and familiar with Cygwin, your help is appreciated.
 
 # SEE ALSO
 
