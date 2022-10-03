@@ -82,8 +82,17 @@ has 'queue' => (
     default => sub { Thread::Queue->new() },
 );
 
-Win32::API->Import( 'kernel32.dll', 'ReadDirectoryChangesW', 'NPNNNPNN','N' )
-    or die $^E;
+Win32::API::More->Import( 'kernel32', 'BOOL ReadDirectoryChangesW(
+  HANDLE                          hDirectory,
+  LPVOID                          lpBuffer,
+  DWORD                           nBufferLength,
+  BOOL                            bWatchSubtree,
+  DWORD                           dwNotifyFilter,
+  LPDWORD                         lpBytesReturned,
+  LPVOID                          lpOverlapped,
+  LPVOID                          lpCompletionRoutine
+)' )
+    or die Win32::FormatMessage(Win32::GetLastError());
 Win32::API->Import( 'kernel32.dll', 'CancelIoEx', 'NN','N' )
     or die $^E;
 
@@ -133,8 +142,8 @@ sub _unpack_file_notify_information( $buf ) {
 }
 
 sub _ReadDirectoryChangesW( $hDirectory, $watchSubTree, $filter ) {
-    my $buffer = "\0" x 65520;
-    my $returnBufferSize = "\0" x 4;
+    my $buffer = "\0" x 16384;
+    my $returnBufferSize = 0;
     my $r = ReadDirectoryChangesW(
         $hDirectory,
         $buffer,
@@ -142,10 +151,9 @@ sub _ReadDirectoryChangesW( $hDirectory, $watchSubTree, $filter ) {
         !!$watchSubTree,
         $filter,
         $returnBufferSize,
-        0,
-        0);
+        undef,
+        undef);
     if( $r ) {
-        $returnBufferSize = unpack 'V', $returnBufferSize;
         return substr $buffer, 0, $returnBufferSize;
     } else {
         return undef
