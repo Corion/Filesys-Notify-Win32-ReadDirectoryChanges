@@ -10,6 +10,7 @@ META.yml
 README
 README.mkdn
 t/00-load.t
+t/02-readdirectorychanges-cygwin-crash.t
 t/02-watcher-readdirectorychanges.t
 testrules.yml
 xt/99-changes.t

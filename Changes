@@ -1,5 +1,6 @@
 0.02 2022-10-03
-    * Also (try to) support Cygwin
+    * Note lack of Cygwin support
+    * Fix SYNOPSIS (contributed by Lorenzo)
 
 0.01 2022-10-02
     * Released on an unsuspecting world, spun off from the unreleased
