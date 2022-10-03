@@ -173,22 +173,30 @@ sub _watcher($winpath,$orgpath,$hPath,$subtree,$queue) {
         my $res = _ReadDirectoryChangesW($hPath, $subtree, 0x1b);
 
         if( ! defined $res ) {
-            if( $^E != 995 ) { # ReadDirectoryChangesW got cancelled and we should quit
+            my $err = Win32::GetLastError();
+            if( $err != 995 ) { # 995 means ReadDirectoryChangesW got cancelled and we should quit
+                warn $orgpath;
+                warn $winpath;
                 warn $^E;
             }
             last
-        }
+        };
 
         for my $i (_unpack_file_notify_information($res)) {
             $i->{path} = $winpath . $i->{path};
             if( $is_cygwin ) {
-                $i->{path} = Cygwin::win_to_posix_path( $i->{path} );
+                my $p = $i->{path};
+                warn "win32 : $p";
+                #$i->{path} = Cygwin::win_to_posix_path( $p );
+                warn "cygwin: path: '$i->{path}'";
             };
             if( $i->{action} eq 'renamed') {
                 for( qw(old_name new_name)) {
                     $i->{$_} = $winpath . $i->{$_};
                     if( $is_cygwin ) {
-                        $i->{$_} = Cygwin::win_to_posix_path( $i->{$_} );
+                        warn "win32 : $_: '$i->{$_}'";
+                        #$i->{$_} = Cygwin::win_to_posix_path( $i->{$_} );
+                        warn "cygwin: $_: '$i->{$_}'";
                     };
                 };
             };
@@ -199,7 +207,8 @@ sub _watcher($winpath,$orgpath,$hPath,$subtree,$queue) {
 
 sub build_watcher( $self, %options ) {
     my $orgpath = delete $options{ path };
-    my $winpath = $is_cygwin ? Cygwin::posix_to_win_path($path) : $path;
+    my $winpath = $is_cygwin ? Cygwin::posix_to_win_path($orgpath) : $orgpath;
+    my $subtree = !!( $options{ subtree } // $self->subtree );
     $winpath .= "\\" if $winpath !~ /\\\z/;
     my $queue = $self->queue;
     my $hPath = CreateFile( $winpath, FILE_LIST_DIRECTORY()|GENERIC_READ(), FILE_SHARE_READ() | FILE_SHARE_WRITE(), [], OPEN_EXISTING(), FILE_FLAG_BACKUP_SEMANTICS(), [] )
