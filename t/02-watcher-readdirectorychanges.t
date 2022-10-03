@@ -4,8 +4,8 @@ use 5.010;
 use Test::More;
 
 BEGIN {
-    if( $^O ne 'MSWin32' ) {
-        plan skip_all => "This module only works on Windows";
+    if( $^O !~ /MSWin32|cygwin/ ) {
+        plan skip_all => "This module only works on Windows or Cygwin";
         exit;
     };
 };

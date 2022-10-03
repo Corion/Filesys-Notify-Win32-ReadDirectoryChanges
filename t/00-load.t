@@ -9,9 +9,11 @@ my %module = get_module_info();
 
 my $module = $module{ NAME };
 
-if( $^O ne 'MSWin32' ) {
-    plan skip_all => "This module only works on Windows";
-    exit;
+BEGIN {
+    if( $^O !~ /MSWin32|cygwin/ ) {
+        plan skip_all => "This module only works on Windows or Cygwin";
+        exit;
+    };
 };
 
 plan tests => 1;

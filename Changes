@@ -1,3 +1,6 @@
+0.02 2022-10-03
+    * Also (try to) support Cygwin
+
 0.01 2022-10-02
     * Released on an unsuspecting world, spun off from the unreleased
       Filesys::DB

@@ -13,6 +13,7 @@ use Thread::Queue;
 use Encode 'decode';
 
 our $VERSION = '0.01';
+our $is_cygwin = $^O eq 'cygwin';
 
 =head1 NAME
 
@@ -157,7 +158,7 @@ sub _ReadDirectoryChangesW( $hDirectory, $watchSubTree, $filter ) {
 
 # This is what each thread runs, in a named subroutine so
 # we don't accidentially close over some variable
-sub _watcher($path,$hPath,$subtree,$queue) {
+sub _watcher($winpath,$orgpath,$hPath,$subtree,$queue) {
     my $running = 1;
     while($running) {
         # 0x1b means 'DIR_NAME|FILE_NAME|LAST_WRITE|SIZE' = 2|1|0x10|8
@@ -171,10 +172,16 @@ sub _watcher($path,$hPath,$subtree,$queue) {
         }
 
         for my $i (_unpack_file_notify_information($res)) {
-            $i->{path} = File::Spec->catfile( $path , $i->{path} );
+            $i->{path} = $winpath . $i->{path};
+            if( $is_cygwin ) {
+                $i->{path} = Cygwin::win_to_posix_path( $i->{path} );
+            };
             if( $i->{action} eq 'renamed') {
                 for( qw(old_name new_name)) {
-                    $i->{$_} = File::Spec->catfile( $path , $i->{$_} );
+                    $i->{$_} = $winpath . $i->{$_};
+                    if( $is_cygwin ) {
+                        $i->{$_} = Cygwin::win_to_posix_path( $i->{$_} );
+                    };
                 };
             };
             $queue->enqueue($i);
@@ -183,13 +190,14 @@ sub _watcher($path,$hPath,$subtree,$queue) {
 };
 
 sub build_watcher( $self, %options ) {
-    my $path = delete $options{ path };
-    my $subtree = !!( $options{ subtree } // $self->subtree );
+    my $orgpath = delete $options{ path };
+    my $winpath = $is_cygwin ? Cygwin::posix_to_win_path($path) : $path;
+    $winpath .= "\\" if $winpath !~ /\\\z/;
     my $queue = $self->queue;
-    my $hPath = CreateFile( $path, FILE_LIST_DIRECTORY()|GENERIC_READ(), FILE_SHARE_READ() | FILE_SHARE_WRITE(), [], OPEN_EXISTING(), FILE_FLAG_BACKUP_SEMANTICS(), [] )
+    my $hPath = CreateFile( $winpath, FILE_LIST_DIRECTORY()|GENERIC_READ(), FILE_SHARE_READ() | FILE_SHARE_WRITE(), [], OPEN_EXISTING(), FILE_FLAG_BACKUP_SEMANTICS(), [] )
         or die $^E;
-    $path =~ s![\\/]$!!;
-    my $thr = threads->new( \&_watcher, $path, $hPath, $subtree, $queue);
+    $orgpath =~ s![\\/]$!!;
+    my $thr = threads->new( \&_watcher, $winpath, $orgpath, $hPath, $subtree, $queue);
     return { thread => $thr, handle => $hPath };
 }
 
