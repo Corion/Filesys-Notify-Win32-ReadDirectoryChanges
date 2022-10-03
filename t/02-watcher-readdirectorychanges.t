@@ -17,11 +17,13 @@ use threads;
 
 my ($fh1,$tempname1) = tempfile( UNLINK => 1 );
 my $tempdir = dirname($tempname1);
+my $wintempdir = $tempdir;
 close $fh1;
 
 # spirit the thread away in a subroutine so we
 # don't close over the file watcher
 sub do_stuff {
+
     my ($fh2,$tempname2) = tempfile(UNLINK => 0);
     close $fh2;
 
@@ -32,7 +34,6 @@ sub do_stuff {
     my $t = async {
         note "Temp name 2: $tempname2";
         open $fh2, '>', $tempname2;
-
         print {$fh2} "Hello World\n";
         close $fh2;
         unlink $tempname2 or warn $!;
@@ -72,6 +73,7 @@ while ( my $ev = $w->queue->dequeue ) {
         # our timeout marker
         note "Timeout reached";
         $timeout = 1;
+        last;
     }
 
     note "$ev->{path}: $ev->{action}";
