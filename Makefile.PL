@@ -1,7 +1,7 @@
 # -*- mode: perl; c-basic-offset: 4; indent-tabs-mode: nil; -*-
 
 use strict;
-use ExtUtils::MakeMaker qw(WriteMakefile);
+use ExtUtils::MakeMaker qw(WriteMakefile os_unsupported);
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
 
@@ -69,6 +69,19 @@ my %module = (
 
     test            => { TESTS => join( ' ', @tests ) },
 );
+
+# Check the Windows version - we can't run on Windows XP
+sub is_Windows_XP {
+    if( $^O =~ /^(?:MSWin32|cygwin)$/ ) {
+        my($str,$maj,$min,$build,$id) = Win32::GetOSVersion();
+        my $ver = sprintf '%03d03', $maj, $min;
+        if( $ver lt '005002' ) {
+            # Windows XP is not supported, bail out
+            print "*** Windows XP does not have the ReadDirectoryChanges API";
+            os_unsupported();
+        }
+    }
+}
 
 # This is so that we can do
 #     require 'Makefile.PL'
