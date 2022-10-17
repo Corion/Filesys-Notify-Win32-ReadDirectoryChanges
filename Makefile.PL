@@ -85,6 +85,11 @@ sub is_Windows_XP {
 	return 0
 }
 
+# Check the Windows version - we can't run on Windows XP
+sub is_cygwin {
+	return $^O eq 'cygwin';
+}
+
 # This is so that we can do
 #     require 'Makefile.PL'
 # and then call get_module_info
@@ -97,6 +102,12 @@ if( ! caller ) {
     regen_EXAMPLES() if -d 'examples';
 	
 	if( is_Windows_XP()) {
+		os_unsupported();
+    };
+	
+	# Your help for getting this to run on Cygwin is appreciated
+	if( is_cygwin()) {
+		print "Cygwin detected, help wanted for supporting it!\n";
 		os_unsupported();
     };
 	
