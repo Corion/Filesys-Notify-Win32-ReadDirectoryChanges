@@ -74,13 +74,15 @@ my %module = (
 sub is_Windows_XP {
     if( $^O =~ /^(?:MSWin32|cygwin)$/ ) {
         my($str,$maj,$min,$build,$id) = Win32::GetOSVersion();
-        my $ver = sprintf '%03d03', $maj, $min;
+        my $ver = sprintf '%03d%03d', $maj, $min;
+		print "Running on Windows version $ver ($build, $id)\n";
         if( $ver lt '005002' ) {
             # Windows XP is not supported, bail out
-            print "*** Windows XP does not have the ReadDirectoryChanges API";
-            os_unsupported();
+            print "*** Windows XP does not have the ReadDirectoryChanges API ($ver)";
+			return 1;
         }
-    }
+    };
+	return 0
 }
 
 # This is so that we can do
@@ -93,6 +95,11 @@ if( ! caller ) {
     # I should maybe use something like Shipwright...
     regen_README($main_file);
     regen_EXAMPLES() if -d 'examples';
+	
+	if( is_Windows_XP()) {
+		os_unsupported();
+    };
+	
     WriteMakefile1(get_module_info);
 };
 
