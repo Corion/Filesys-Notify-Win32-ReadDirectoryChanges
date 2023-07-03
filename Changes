@@ -3,6 +3,9 @@
       and IO::KQueue all seem to support that feature
       Suggested by Guido Flohr. This addresses issue GH #4
 
+0.05 - Mon Jul  3 11:41:33 2023
+
+
 0.04 2022-10-17
     * Actually bail out on Windows XP and Cygwin, instead of just writing
       a function to do so
