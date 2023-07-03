@@ -169,8 +169,8 @@ sub _ReadDirectoryChangesW( $hDirectory, $watchSubTree, $filter ) {
 sub _watcher($winpath,$orgpath,$hPath,$subtree,$queue) {
     my $running = 1;
     while($running) {
-        # 0x1b means 'DIR_NAME|FILE_NAME|LAST_WRITE|SIZE' = 2|1|0x10|8
-        my $res = _ReadDirectoryChangesW($hPath, $subtree, 0x1b);
+        # 0x1b means 'DIR_NAME|FILE_NAME|LAST_WRITE|SIZE|CHANGE_ATTRIBUTES' = 2|1|0x10|8|4
+        my $res = _ReadDirectoryChangesW($hPath, $subtree, 0x1f);
 
         if( ! defined $res ) {
             my $err = Win32::GetLastError();
