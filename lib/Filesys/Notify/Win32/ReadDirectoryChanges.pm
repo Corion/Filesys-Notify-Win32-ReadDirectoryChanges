@@ -152,7 +152,7 @@ sub _ReadDirectoryChangesW( $hDirectory, $watchSubTree, $filter ) {
         $filter,
         $returnBufferSize,
         undef,
-        undef);
+        0);
     if( $r ) {
         return substr $buffer, 0, $returnBufferSize;
     } else {
