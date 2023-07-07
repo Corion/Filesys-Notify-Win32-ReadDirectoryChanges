@@ -14,6 +14,7 @@ use Encode 'decode';
 
 our $VERSION = '0.05';
 our $is_cygwin = $^O eq 'cygwin';
+our $bufsize = 65520;
 
 =head1 NAME
 
@@ -142,7 +143,7 @@ sub _unpack_file_notify_information( $buf ) {
 }
 
 sub _ReadDirectoryChangesW( $hDirectory, $watchSubTree, $filter ) {
-    my $buffer = "\0" x 65500;
+    my $buffer = "\0" x $bufsize;
     my $returnBufferSize = 0;
     my $r = ReadDirectoryChangesW(
         $hDirectory,
@@ -351,6 +352,19 @@ a third, synthetic event is generated, C<renamed>.
       old_name => 'old-name.example',
       new_name => 'new-name.example',
   }
+
+=back
+
+=head1 GLOBAL VARIABLES
+
+=over 4
+
+=item C<$bufsize>
+
+  local $Filesys::Notify::Win32::ReadDirectoryChanges::bufsize = 1024*1024;
+
+This variable is the buffer for the directory changes that get read from
+Windows. The default size is 65520 bytes.
 
 =back
 

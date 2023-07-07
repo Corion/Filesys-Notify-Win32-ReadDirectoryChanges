@@ -128,6 +128,15 @@ The following events are created by ReadDirectoryChangesW resp. this module
             new_name => 'new-name.example',
         }
 
+# GLOBAL VARIABLES
+
+- `$bufsize`
+
+        local $Filesys::Notify::Win32::ReadDirectoryChanges::bufsize = 1024*1024;
+
+    This variable is the buffer for the directory changes that get read from
+    Windows. The default size is 65520 bytes.
+
 # HELP WANTED
 
 In theory, this module should also work on Cygwin, but for some reason, it
