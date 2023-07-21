@@ -1,3 +1,6 @@
+0.07 2023-07-21
+    * Various test suite updates, no code changes, no need to upgrade
+
 0.06 2023-07-07
     * Make buffer size configurable
       Suggested by Guido Flohr. This addresses issue GH #3
