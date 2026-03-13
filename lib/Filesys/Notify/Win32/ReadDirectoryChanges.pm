@@ -198,9 +198,16 @@ sub _watcher($winpath,$orgpath,$hPath,$subtree,$queue) {
                     };
                 };
             };
-            $queue->enqueue($i);
+            if( defined $queue->pending ) {
+                # queue still open
+                $queue->enqueue($i);
+            } else {
+                # Queue closed, we're done here
+                last;
+            }
         };
     }
+    $queue->end();
 };
 
 sub build_watcher( $self, %options ) {
