@@ -261,6 +261,15 @@ sub unwatch_directory( $self, %options ) {
     }
 }
 
+=head2 C<< ->stop >>
+
+Stops the watcher, releasing all locked resources
+
+You might need to call this if you want to delete or rename one of the
+directories the watcher is watching.
+
+=cut
+
 sub stop( $self ) {
     if( my $w = $self->{watchers}) {
         for my $t (keys %$w) {
@@ -290,7 +299,7 @@ Synchronously wait for file system events.
 
 sub wait( $self, $cb) {
     while( 1 ) {
-        my @events = $self->queue->dequeue;
+        my @events = $self->queue->dequeue();
         for (@events) {
             if( defined $_ ) {
                 $cb->($_);
@@ -396,6 +405,8 @@ L<File::ChangeNotify> - complex cross-platform directory watcher
 
 L<Win32::ChangeNotify> - Win32 directory watcher using the ChangeNotify API
 
+L<Mojo::File::ChangeNotify> - integration with L<Mojolicious>
+
 Currently, no additional information like that available through
 L<https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-readdirectorychangesexw|ReadDirectoryChangesExW>
 is collected. But a wrapper/emulation could provide that information whenever
@@ -417,7 +428,7 @@ Max Maischein C<corion@cpan.org>
 
 =head1 COPYRIGHT (c)
 
-Copyright 2022 by Max Maischein C<corion@cpan.org>.
+Copyright 2022-2026 by Max Maischein C<corion@cpan.org>.
 
 =head1 LICENSE
 
