@@ -11,7 +11,7 @@ use threads; # we launch a thread for each watched tree to keep the logic simple
 use Thread::Queue;
 use Encode 'decode';
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 our $is_cygwin = $^O eq 'cygwin';
 our $bufsize = 65520;
 
