@@ -52,7 +52,8 @@ Creates a new watcher object.
 =cut
 
 sub BUILD($self, $args) {
-    if( my $dirs = delete $args->{directory}) {
+    if( my $dirs =    delete $args->{directories}
+                   // delete $args->{directory}) {
         $dirs = [$dirs] if ! ref $dirs;
         for my $d (@$dirs) {
             $self->watch_directory( path => $d );
