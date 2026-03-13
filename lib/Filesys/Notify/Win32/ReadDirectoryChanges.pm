@@ -2,8 +2,7 @@ package Filesys::Notify::Win32::ReadDirectoryChanges;
 use 5.020;
 
 use Moo 2;
-use feature 'signatures';
-no warnings 'experimental::signatures';
+use experimental "signatures";
 
 use File::Spec;
 use Win32::API;
