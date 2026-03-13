@@ -262,12 +262,19 @@ sub unwatch_directory( $self, %options ) {
     }
 }
 
-sub DESTROY($self) {
+sub stop( $self ) {
     if( my $w = $self->{watchers}) {
         for my $t (keys %$w) {
             $self->unwatch_directory( path => $t )
         }
     };
+    if( my $q = $self->queue ) {
+        $q->end;
+    }
+}
+
+sub DESTROY($self) {
+    $self->stop;
 }
 
 =head2 C<< ->wait $CB >>
